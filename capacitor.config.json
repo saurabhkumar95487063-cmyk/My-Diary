@@ -3,7 +3,7 @@
   "appName": "My Diary",
   "webDir": "frontend",
   "server": {
-    "url": "https://my-diary-iota.vercel.app",
+    "url": "https://mydiary-lake-xi.vercel.app",
     "cleartext": false,
     "androidScheme": "https"
   },
