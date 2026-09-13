@@ -351,5 +351,67 @@
   <script src="js/app.js"></script>
   <script src="js/notes.js"></script>
   <script src="js/schedule.js"></script>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════
+       ANDROID BACK BUTTON HANDLER
+       Prevents app from closing / navigating away unexpectedly
+       ═══════════════════════════════════════════════════════ */
+
+    // Push a dummy history state so browser back doesn't go to index.html
+    if (window.history && window.history.pushState) {
+      window.history.pushState({ page: 'app' }, '', window.location.href);
+    }
+
+    function handleAndroidBack() {
+      // 1. If any modal is open — close it
+      const openModal = document.querySelector('.modal-backdrop.open');
+      if (openModal) {
+        openModal.classList.remove('open');
+        document.body.style.overflow = '';
+        return;
+      }
+
+      // 2. If sidebar is open — close it
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        const overlay = document.getElementById('overlay');
+        if (overlay) overlay.classList.remove('active');
+        return;
+      }
+
+      // 3. If not on home page — go to home
+      if (window.AppState && window.AppState.page !== 'home') {
+        navigateTo('home');
+        return;
+      }
+
+      // 4. On home page — ask before exit
+      if (confirm('Exit My Diary?')) {
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+          window.Capacitor.Plugins.App.exitApp();
+        } else {
+          navigator.app && navigator.app.exitApp
+            ? navigator.app.exitApp()
+            : window.history.back();
+        }
+      }
+    }
+
+    // Capacitor / Cordova back button event
+    document.addEventListener('backbutton', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      handleAndroidBack();
+    }, false);
+
+    // Browser popstate (triggered when back is pressed in WebView)
+    window.addEventListener('popstate', function (e) {
+      // Re-push state so we stay on app.html
+      window.history.pushState({ page: 'app' }, '', window.location.href);
+      handleAndroidBack();
+    });
+  </script>
 </body>
 </html>
