@@ -265,3 +265,17 @@ document.getElementById('noteTitleInput').addEventListener('keydown', (e) => {
 function escapeHtml(str) {
   return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+/* Expose for FAB & back-button */
+window.openNoteModal = function() {
+  AppState.editingNoteId = null;
+  document.getElementById('noteModalTitle').textContent = 'New Note';
+  document.getElementById('noteTitleInput').value = '';
+  document.getElementById('noteBodyInput').value = '';
+  AppState.selectedNoteColor = '#6366f1';
+  document.querySelectorAll('#noteColorPicker .color-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.color === '#6366f1');
+  });
+  openModal('noteModal');
+  setTimeout(() => document.getElementById('noteTitleInput').focus(), 100);
+};

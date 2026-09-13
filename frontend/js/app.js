@@ -225,6 +225,12 @@ function navigateTo(page) {
   if (page === 'notes')     { if (window.loadNotes) loadNotes(); }
   if (page === 'schedules') { if (window.loadSchedules) loadSchedules(); }
   closeSidebar();
+
+  // Show / hide FAB buttons based on current page
+  const fabNote     = document.getElementById('fabAddNote');
+  const fabSchedule = document.getElementById('fabAddSchedule');
+  if (fabNote)     fabNote.style.display     = (page === 'notes')     ? 'flex' : 'none';
+  if (fabSchedule) fabSchedule.style.display = (page === 'schedules') ? 'flex' : 'none';
 }
 
 document.querySelectorAll('.nav-item').forEach(item => {
@@ -330,4 +336,10 @@ document.addEventListener('DOMContentLoaded', () => {
   initBackgroundParticles();
   document.getElementById('scheduleStartDate').value = todayISO();
   navigateTo('home');
+
+  // FAB click handlers
+  const fabNote = document.getElementById('fabAddNote');
+  const fabSched = document.getElementById('fabAddSchedule');
+  if (fabNote)  fabNote.addEventListener('click',  () => { if (window.openNoteModal)     openNoteModal(); });
+  if (fabSched) fabSched.addEventListener('click', () => { if (window.openScheduleModal) openScheduleModal(); });
 });

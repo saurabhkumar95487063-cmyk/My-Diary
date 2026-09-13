@@ -524,3 +524,27 @@ async function toggleTask(taskId, scheduleId) {
     showToast('Failed to update task: ' + err.message, 'error');
   }
 }
+
+/* Expose for FAB */
+window.openScheduleModal = function() {
+  AppState.editingScheduleId = null;
+  document.getElementById('scheduleModalTitle').textContent = 'New Schedule';
+  document.getElementById('scheduleTitleInput').value = '';
+  document.getElementById('scheduleDescInput').value = '';
+  document.getElementById('scheduleTypeSelect').value = 'daily';
+  document.getElementById('scheduleTypeSelect').disabled = false;
+  document.getElementById('scheduleStartDate').value = todayISO();
+  document.getElementById('scheduleEndDate').value = '';
+  document.getElementById('scheduleTime').value = '';
+  document.getElementById('scheduleModalSave').innerHTML = '<i class="fa fa-save"></i> Save Schedule';
+  AppState.selectedScheduleColor = '#8b5cf6';
+  AppState.selectedDays = [];
+  AppState.selectedDates = [];
+  document.querySelectorAll('#scheduleColorPicker .color-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.color === '#8b5cf6');
+  });
+  resetDayPicker();
+  updateScheduleTypeUI();
+  openModal('scheduleModal');
+  setTimeout(() => document.getElementById('scheduleTitleInput').focus(), 100);
+};
