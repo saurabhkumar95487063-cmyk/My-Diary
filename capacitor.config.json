@@ -1,0 +1,12 @@
+{
+  "appId": "com.mydairy.app",
+  "appName": "My Diary",
+  "webDir": "frontend",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

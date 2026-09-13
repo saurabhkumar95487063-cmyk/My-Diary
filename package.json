@@ -1,0 +1,18 @@
+{
+  "name": "mydairy",
+  "version": "1.0.0",
+  "description": "My Diary - Personal Notes & Schedule Manager",
+  "scripts": {
+    "start": "cd backend && node server.js",
+    "dev": "cd backend && npm run dev",
+    "install-backend": "cd backend && npm install",
+    "cap:add": "cap add android",
+    "cap:sync": "cap sync android",
+    "cap:open": "cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/core": "^8.5.2"
+  }
+}

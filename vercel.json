@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "builds": [
+    {
+      "src": "frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/app",
+      "dest": "/frontend/app.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
+    }
+  ]
+}

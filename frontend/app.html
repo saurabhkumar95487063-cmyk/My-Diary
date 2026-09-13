@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Diary — Dashboard</title>
+  <meta name="description" content="Your personal diary for notes and schedule management." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="icon" href="logo.png" type="image/png" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Animated particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <img src="logo.png" alt="Logo" style="width:32px; height:32px; object-fit:contain; border-radius:8px;" />
+        <span class="logo-text">My Diary</span>
+      </div>
+      <button class="sidebar-close" id="sidebarClose"><i class="fa fa-times"></i></button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="notes" id="navNotes">
+        <i class="fa fa-book-open"></i>
+        <span class="nav-title">My Notes</span>
+        <span class="nav-badge" id="notesBadge">0</span>
+      </a>
+      <a href="#" class="nav-item" data-page="schedules" id="navSchedules">
+        <i class="fa fa-calendar-check"></i>
+        <span class="nav-title">My Schedule</span>
+        <span class="nav-badge" id="schedulesBadge">0</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <!-- User Card -->
+      <div class="user-card" id="userCard">
+        <div class="user-avatar" id="sidebarAvatar">U</div>
+        <div class="user-info">
+          <span class="user-name" id="sidebarName">Loading...</span>
+          <span class="user-sub" id="sidebarEmail">...</span>
+        </div>
+      </div>
+      <!-- Logout -->
+      <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">
+        <i class="fa fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Overlay for mobile -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Main Content -->
+  <div class="main-wrapper">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn"><i class="fa fa-bars"></i></button>
+      <div class="topbar-center">
+        <span class="page-title" id="pageTitle">Home</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-user" id="topbarUser">
+          <div class="topbar-avatar" id="topbarAvatar">U</div>
+          <span class="topbar-greeting" id="topbarGreeting">Hello!</span>
+        </div>
+        <span class="current-date" id="currentDate"></span>
+      </div>
+    </header>
+
+    <!-- Pages -->
+    <main class="content" id="mainContent">
+
+      <!-- =================== HOME PAGE =================== -->
+      <section class="page" id="homePage">
+        <div class="page-hero">
+          <div class="hero-text">
+            <h1>Welcome to My Diary</h1>
+          </div>
+        </div>
+
+        <div class="hero-actions dashboard-actions">
+          <button class="btn btn-secondary nav-switch-btn dash-btn" onclick="navigateTo('notes')">
+            <div class="btn-left">
+              <i class="fa fa-book-open"></i>
+              <span class="btn-label">My Notes</span>
+            </div>
+            <span class="nav-badge-pill" id="homeNotesBadge">0</span>
+          </button>
+          <button class="btn btn-secondary nav-switch-btn dash-btn" onclick="navigateTo('schedules')">
+            <div class="btn-left">
+              <i class="fa fa-calendar-check"></i>
+              <span class="btn-label">My Schedule</span>
+            </div>
+            <span class="nav-badge-pill" id="homeSchedulesBadge">0</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- =================== NOTES PAGE =================== -->
+      <section class="page hidden" id="notesPage">
+        <div class="toolbar">
+          <div class="search-box">
+            <i class="fa fa-search"></i>
+            <input type="text" id="noteSearch" placeholder="Search notes..." />
+            <button class="clear-search" id="clearNoteSearch"><i class="fa fa-times"></i></button>
+          </div>
+          <div class="filter-chips">
+            <button class="chip active" data-filter="all">All</button>
+            <button class="chip" data-filter="pinned">📌 Pinned</button>
+          </div>
+        </div>
+
+        <div class="notes-grid" id="notesGrid"></div>
+        <div class="empty-state" id="notesEmpty">
+          <div class="empty-icon">📝</div>
+          <h3>No notes yet</h3>
+          <p>Click "New Note" to start writing</p>
+          <button class="btn btn-primary btn-sm" id="addNoteBtnFromEmpty" style="margin-top:14px;">
+            <i class="fa fa-plus"></i> Create Note
+          </button>
+        </div>
+      </section>
+
+      <!-- =================== SCHEDULES PAGE =================== -->
+      <section class="page hidden" id="schedulesPage">
+        <div class="toolbar schedule-toolbar">
+          <div class="search-box">
+            <i class="fa fa-search"></i>
+            <input type="text" id="scheduleSearch" placeholder="Search schedules..." />
+            <button class="clear-search" id="clearScheduleSearch"><i class="fa fa-times"></i></button>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label"><i class="fa fa-calendar-alt"></i> Type</span>
+            <div class="filter-chips">
+              <button class="chip active" data-filter="all">All</button>
+              <button class="chip" data-filter="today">⭐ Today</button>
+              <button class="chip" data-filter="daily">📆 Daily</button>
+              <button class="chip" data-filter="weekly">📅 Weekly</button>
+              <button class="chip" data-filter="monthly">🗓️ Monthly</button>
+              <button class="chip" data-filter="yearly">🎯 Yearly</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label"><i class="fa fa-tasks"></i> Status</span>
+            <div class="filter-chips">
+              <button class="chip active" data-status="all">All Status</button>
+              <button class="chip" data-status="incomplete">🕐 Pending</button>
+              <button class="chip" data-status="complete">✅ Done</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="schedules-list" id="schedulesList"></div>
+        <div class="empty-state" id="schedulesEmpty">
+          <div class="empty-icon">📅</div>
+          <h3>No schedules yet</h3>
+          <p>Click "New Schedule" to start planning</p>
+          <button class="btn btn-primary btn-sm" id="addScheduleBtnFromEmpty" style="margin-top:14px;">
+            <i class="fa fa-calendar-plus"></i> Create Schedule
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ========= MODAL: Add/Edit Note ========= -->
+  <div class="modal-backdrop" id="noteModal">
+    <div class="modal" id="noteModalBox">
+      <div class="modal-header">
+        <h2 id="noteModalTitle">New Note</h2>
+        <button class="modal-close" id="noteModalClose"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="noteTitleInput">Title <span class="required">*</span></label>
+          <input type="text" id="noteTitleInput" placeholder="Enter note title..." maxlength="100" />
+        </div>
+        <div class="form-group">
+          <label for="noteBodyInput">Content</label>
+          <textarea id="noteBodyInput" placeholder="Write your thoughts here..." rows="8"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Color Theme</label>
+          <div class="color-picker" id="noteColorPicker">
+            <button class="color-btn active" data-color="#6366f1" style="background:#6366f1" title="Violet"></button>
+            <button class="color-btn" data-color="#ec4899" style="background:#ec4899" title="Pink"></button>
+            <button class="color-btn" data-color="#f59e0b" style="background:#f59e0b" title="Amber"></button>
+            <button class="color-btn" data-color="#10b981" style="background:#10b981" title="Green"></button>
+            <button class="color-btn" data-color="#3b82f6" style="background:#3b82f6" title="Blue"></button>
+            <button class="color-btn" data-color="#ef4444" style="background:#ef4444" title="Red"></button>
+            <button class="color-btn" data-color="#8b5cf6" style="background:#8b5cf6" title="Purple"></button>
+            <button class="color-btn" data-color="#06b6d4" style="background:#06b6d4" title="Cyan"></button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="noteModalCancel">Cancel</button>
+        <button class="btn btn-primary" id="noteModalSave">
+          <i class="fa fa-save"></i> Save Note
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= MODAL: Add Schedule ========= -->
+  <div class="modal-backdrop" id="scheduleModal">
+    <div class="modal modal-wide" id="scheduleModalBox">
+      <div class="modal-header">
+        <h2 id="scheduleModalTitle">New Schedule</h2>
+        <button class="modal-close" id="scheduleModalClose"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="scheduleTitleInput">Title <span class="required">*</span></label>
+            <input type="text" id="scheduleTitleInput" placeholder="Schedule title..." maxlength="100" />
+          </div>
+          <div class="form-group">
+            <label for="scheduleTypeSelect">Type <span class="required">*</span></label>
+            <select id="scheduleTypeSelect">
+              <option value="today">⭐ Today</option>
+              <option value="daily" selected>📆 Daily</option>
+              <option value="weekly">📅 Weekly</option>
+              <option value="monthly">🗓️ Monthly</option>
+              <option value="yearly">🎯 Yearly</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="scheduleDescInput">Description</label>
+          <textarea id="scheduleDescInput" placeholder="What is this schedule about?" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="scheduleStartDate">Start Date <span class="required">*</span></label>
+            <input type="date" id="scheduleStartDate" />
+          </div>
+          <div class="form-group flex-1">
+            <label for="scheduleEndDate">End Date</label>
+            <input type="date" id="scheduleEndDate" />
+          </div>
+        </div>
+        <div class="form-group" id="weeklyOptions" style="display:none">
+          <label>Select Days of Week</label>
+          <div class="day-picker" id="dayPicker">
+            <button type="button" class="day-btn" data-day="0">Sun</button>
+            <button type="button" class="day-btn" data-day="1">Mon</button>
+            <button type="button" class="day-btn" data-day="2">Tue</button>
+            <button type="button" class="day-btn" data-day="3">Wed</button>
+            <button type="button" class="day-btn" data-day="4">Thu</button>
+            <button type="button" class="day-btn" data-day="5">Fri</button>
+            <button type="button" class="day-btn" data-day="6">Sat</button>
+          </div>
+        </div>
+        <div class="form-group" id="monthlyOptions" style="display:none">
+          <label>Select Dates of Month</label>
+          <div class="date-picker" id="monthDatePicker"></div>
+        </div>
+        <div class="form-group">
+          <label for="scheduleTime"><i class="fa fa-bell" style="color:var(--amber)"></i> Alarm / Reminder Time</label>
+          <input type="time" id="scheduleTime" />
+        </div>
+        <div class="form-group">
+          <label>Color</label>
+          <div class="color-picker" id="scheduleColorPicker">
+            <button class="color-btn active" data-color="#8b5cf6" style="background:#8b5cf6" title="Purple"></button>
+            <button class="color-btn" data-color="#6366f1" style="background:#6366f1" title="Violet"></button>
+            <button class="color-btn" data-color="#ec4899" style="background:#ec4899" title="Pink"></button>
+            <button class="color-btn" data-color="#f59e0b" style="background:#f59e0b" title="Amber"></button>
+            <button class="color-btn" data-color="#10b981" style="background:#10b981" title="Green"></button>
+            <button class="color-btn" data-color="#3b82f6" style="background:#3b82f6" title="Blue"></button>
+            <button class="color-btn" data-color="#ef4444" style="background:#ef4444" title="Red"></button>
+            <button class="color-btn" data-color="#06b6d4" style="background:#06b6d4" title="Cyan"></button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="scheduleModalCancel">Cancel</button>
+        <button class="btn btn-primary" id="scheduleModalSave">
+          <i class="fa fa-save"></i> Save Schedule
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= MODAL: Schedule Detail ========= -->
+  <div class="modal-backdrop" id="scheduleDetailModal">
+    <div class="modal modal-wide" id="scheduleDetailBox">
+      <div class="modal-header" id="detailModalHeader">
+        <div>
+          <h2 id="detailTitle">Schedule</h2>
+          <p id="detailSubtitle" class="modal-subtitle"></p>
+        </div>
+        <button class="modal-close" id="detailModalClose"><i class="fa fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="progress-section">
+          <div class="progress-stats" id="detailStats"></div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="detailProgressBar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="tasks-list" id="detailTasksList"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="detailModalClose2">Close</button>
+        <button class="btn btn-danger" id="detailDeleteBtn">
+          <i class="fa fa-trash"></i> Delete Schedule
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= TOAST ========= -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ========= CONFIRM ========= -->
+  <div class="modal-backdrop" id="confirmModal">
+    <div class="modal confirm-modal" id="confirmBox">
+      <div class="confirm-icon">⚠️</div>
+      <h3 id="confirmTitle">Are you sure?</h3>
+      <p id="confirmMsg">This action cannot be undone.</p>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="confirmCancel">Cancel</button>
+        <button class="btn btn-danger" id="confirmOk">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= ALARM NOTIFICATION MODAL ========= -->
+  <div class="modal-backdrop" id="alarmRingModal">
+    <div class="modal confirm-modal" id="alarmRingBox" style="border:2px solid var(--amber);">
+      <div class="alarm-ring-icon" style="font-size:3.5rem; margin-bottom:12px;">⏰</div>
+      <h2 id="alarmTitle" style="font-size:1.3rem; margin-bottom:6px; color:var(--text-primary);">Schedule Reminder!</h2>
+      <p id="alarmTimeText" style="color:var(--amber); font-weight:700; font-size:1.1rem; margin-bottom:6px;"></p>
+      <p id="alarmDescText" style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:20px;"></p>
+      <div class="modal-footer" style="justify-content:center; border-top:none; padding-top:0;">
+        <button class="btn btn-primary" id="stopAlarmBtn" onclick="stopAlarmSound()" style="background:linear-gradient(135deg, #f59e0b, #ec4899); min-width:200px;">
+          <i class="fa fa-bell-slash"></i> Stop Alarm & Dismiss
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/notes.js"></script>
+  <script src="js/schedule.js"></script>
+</body>
+</html>

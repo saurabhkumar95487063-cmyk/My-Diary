@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+
+# Logs & Environment
+*.log
+.env
+.env.*
+tunnel.txt
+
+# Local data & temp builds
+backend/diary.json
+*.apk
+*.aab
+dist/
+build/
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

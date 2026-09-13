@@ -1,0 +1,22 @@
+{
+  "name": "mydairy-backend",
+  "version": "1.0.0",
+  "description": "My Diary Backend API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "echo Built",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "lowdb": "^1.0.0",
+    "uuid": "^9.0.0"
+  }
+}
