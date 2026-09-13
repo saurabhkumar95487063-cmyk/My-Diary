@@ -540,30 +540,29 @@
 
     function getApiUrl() {
       const DEFAULT_RENDER_API = 'https://my-diary-ksur.onrender.com/api';
-      const isCapacitor = !!(window.Capacitor || window.location.protocol === 'file:' || (window.Capacitor && window.Capacitor.isNativePlatform()));
 
-      let customUrl = localStorage.getItem('diary_api_url');
-      if (customUrl && customUrl.trim()) {
-        if (isCapacitor && (customUrl.includes('localhost') || customUrl.includes('127.0.0.1') || customUrl.includes('172.') || customUrl.includes('192.168.'))) {
+      // Always clear any stale local IP from localStorage
+      const storedUrl = localStorage.getItem('diary_api_url');
+      if (storedUrl) {
+        const isLocalIP = /localhost|127\.0\.0\.1|172\.|192\.168\.|10\./.test(storedUrl);
+        if (isLocalIP) {
           localStorage.removeItem('diary_api_url');
-        } else {
-          return formatApiEndpoint(customUrl);
+        } else if (storedUrl.trim()) {
+          return formatApiEndpoint(storedUrl);
         }
       }
 
-      if (window.RENDER_API_URL || window.MYDIARY_API_URL) {
-        return formatApiEndpoint(window.RENDER_API_URL || window.MYDIARY_API_URL);
-      }
-
-      if (isCapacitor) {
+      // On Capacitor (native Android/iOS) or file:// protocol — always use live server
+      if (typeof window.Capacitor !== 'undefined' || window.location.protocol === 'file:') {
         return DEFAULT_RENDER_API;
       }
 
-      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      if (isLocalhost && window.location.port && window.location.port !== '80' && window.location.port !== '443') {
+      // On real localhost dev server (with a port)
+      if ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port) {
         return `${window.location.protocol}//${window.location.hostname}:3000/api`;
       }
 
+      // Default: live Render backend
       return DEFAULT_RENDER_API;
     }
     const API = getApiUrl();
