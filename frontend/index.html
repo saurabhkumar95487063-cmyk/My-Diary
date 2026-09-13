@@ -540,20 +540,28 @@
 
     function getApiUrl() {
       const DEFAULT_RENDER_API = 'https://my-diary-ksur.onrender.com/api';
-      const customUrl = localStorage.getItem('diary_api_url');
-      if (customUrl && customUrl.trim()) return formatApiEndpoint(customUrl);
+      const isCapacitor = !!(window.Capacitor || window.location.protocol === 'file:' || (window.Capacitor && window.Capacitor.isNativePlatform()));
+
+      let customUrl = localStorage.getItem('diary_api_url');
+      if (customUrl && customUrl.trim()) {
+        if (isCapacitor && (customUrl.includes('localhost') || customUrl.includes('127.0.0.1') || customUrl.includes('172.') || customUrl.includes('192.168.'))) {
+          localStorage.removeItem('diary_api_url');
+        } else {
+          return formatApiEndpoint(customUrl);
+        }
+      }
 
       if (window.RENDER_API_URL || window.MYDIARY_API_URL) {
         return formatApiEndpoint(window.RENDER_API_URL || window.MYDIARY_API_URL);
       }
 
-      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      if (isLocalhost) {
-        return `${window.location.protocol}//${window.location.hostname}:3000/api`;
+      if (isCapacitor) {
+        return DEFAULT_RENDER_API;
       }
 
-      if (window.Capacitor || window.location.protocol === 'file:') {
-        return DEFAULT_RENDER_API;
+      const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      if (isLocalhost && window.location.port && window.location.port !== '80' && window.location.port !== '443') {
+        return `${window.location.protocol}//${window.location.hostname}:3000/api`;
       }
 
       return DEFAULT_RENDER_API;
