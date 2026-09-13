@@ -57,6 +57,20 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📝 Notes API:      http://localhost:${PORT}/api/notes`);
   console.log(`📅 Schedules API:  http://localhost:${PORT}/api/schedules`);
   console.log(`\nPress Ctrl+C to stop.\n`);
+
+  // ── Keep-Alive: ping self every 14 minutes so Render never cold-starts ──
+  if (process.env.NODE_ENV === 'production') {
+    const https = require('https');
+    const SELF_URL = process.env.RENDER_EXTERNAL_URL || 'https://my-diary-ksur.onrender.com';
+    setInterval(() => {
+      https.get(`${SELF_URL}/api/health`, (res) => {
+        console.log(`[Keep-Alive] Ping OK — ${new Date().toISOString()} (status ${res.statusCode})`);
+      }).on('error', (err) => {
+        console.warn('[Keep-Alive] Ping failed:', err.message);
+      });
+    }, 14 * 60 * 1000); // every 14 minutes
+    console.log('✅ Keep-Alive ping started (every 14 min)');
+  }
 });
 
 module.exports = app;

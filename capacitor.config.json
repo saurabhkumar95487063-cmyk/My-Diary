@@ -3,10 +3,11 @@
   "appName": "My Diary",
   "webDir": "frontend",
   "server": {
-    "androidScheme": "http",
-    "cleartext": true
+    "url": "https://my-diary-iota.vercel.app",
+    "cleartext": false,
+    "androidScheme": "https"
   },
   "android": {
-    "allowMixedContent": true
+    "allowMixedContent": false
   }
 }
