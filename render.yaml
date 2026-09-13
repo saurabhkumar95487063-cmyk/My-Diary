@@ -3,7 +3,7 @@ services:
     name: mydairy-backend
     env: node
     plan: free
-    buildCommand: cd backend && npm install
+    buildCommand: npm install && npm install --prefix backend
     startCommand: cd backend && npm start
     healthCheckPath: /api/health
     envVars:

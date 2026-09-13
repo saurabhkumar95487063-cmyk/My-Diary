@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "description": "My Diary - Personal Notes & Schedule Manager",
   "scripts": {
-    "start": "cd backend && node server.js",
+    "postinstall": "npm install --prefix backend",
+    "build": "npm install --prefix backend",
+    "start": "cd backend && npm start",
     "dev": "cd backend && npm run dev",
-    "install-backend": "cd backend && npm install",
+    "install-backend": "npm install --prefix backend",
     "cap:add": "cap add android",
     "cap:sync": "cap sync android",
     "cap:open": "cap open android"
