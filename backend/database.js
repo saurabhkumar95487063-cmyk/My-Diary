@@ -1,23 +1,25 @@
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
-const path = require('path');
+const mongoose = require('mongoose');
+
+const MONGO_URI = process.env.MONGO_URI || '';
+
+async function connectDB() {
+  if (!MONGO_URI) {
+    console.error('❌ MONGO_URI environment variable is not set!');
+    process.exit(1);
+  }
+  try {
+    await mongoose.connect(MONGO_URI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+    });
+    console.log('✅ MongoDB connected successfully!');
+  } catch (err) {
+    console.error('❌ MongoDB connection failed:', err.message);
+    process.exit(1);
+  }
+}
+
+// Keep backward compat: export connectDB + a simple uuidv4 (still used in IDs where needed)
 const { v4: uuidv4 } = require('uuid');
 
-const fs = require('fs');
-const dbDir = process.env.DATA_DIR || __dirname;
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
-}
-const dbPath = path.join(dbDir, 'diary.json');
-const adapter = new FileSync(dbPath);
-const db = low(adapter);
-
-// Set defaults — now includes users collection
-db.defaults({
-  users: [],
-  notes: [],
-  schedules: [],
-  schedule_tasks: []
-}).write();
-
-module.exports = { db, uuidv4 };
+module.exports = { connectDB, uuidv4 };
