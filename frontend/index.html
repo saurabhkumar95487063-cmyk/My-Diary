@@ -544,6 +544,7 @@
     }
 
     function getApiUrl() {
+      const DEFAULT_RENDER_API = 'https://my-diary-ksur.onrender.com/api';
       const customUrl = localStorage.getItem('diary_api_url');
       if (customUrl && customUrl.trim()) return formatApiEndpoint(customUrl);
 
@@ -551,16 +552,16 @@
         return formatApiEndpoint(window.RENDER_API_URL || window.MYDIARY_API_URL);
       }
 
-      if (window.Capacitor || window.location.protocol === 'file:') {
-        return 'http://172.23.3.187:3000/api';
-      }
-
       const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       if (isLocalhost) {
         return `${window.location.protocol}//${window.location.hostname}:3000/api`;
       }
 
-      return (window.location.origin || '') + '/api';
+      if (window.Capacitor || window.location.protocol === 'file:') {
+        return DEFAULT_RENDER_API;
+      }
+
+      return DEFAULT_RENDER_API;
     }
     const API = getApiUrl();
 

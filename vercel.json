@@ -9,6 +9,10 @@
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "https://my-diary-ksur.onrender.com/api/$1"
+    },
+    {
       "src": "/app",
       "dest": "/frontend/app.html"
     },
